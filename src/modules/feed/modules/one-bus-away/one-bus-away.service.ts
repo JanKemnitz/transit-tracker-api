@@ -20,6 +20,7 @@ import type {
 import { RegisterFeedProvider } from "../../decorators/feed-provider.decorator"
 import { FeedCacheService } from "../feed-cache/feed-cache.service"
 import { OneBusAwayConfig, OneBusAwayConfigSchema } from "./config"
+import { normalizeRouteColor } from "src/modules/feed/utils/color"
 
 export interface StopGroup {
   id: string
@@ -176,12 +177,10 @@ export class OneBusAwayService implements FeedProvider {
             stopId,
           )
 
-          const color = route.color?.replaceAll("#", "").trim() ?? null
-
           stopRoutes.push({
             routeId: route.id,
             name: route.shortName ?? "Unnamed Route",
-            color: color?.trim() !== "" ? color : null,
+            color: normalizeRouteColor(route.color ?? null),
             headsigns,
           })
         }
@@ -430,14 +429,12 @@ export class OneBusAwayService implements FeedProvider {
             ? new Date(ad.predictedArrivalTime)
             : new Date(ad.scheduledArrivalTime)
 
-        const color = staticRoute?.color?.replaceAll("#", "").trim() ?? null
-
         tripStops.push({
           tripId: ad.tripId,
           stopId,
           routeId: ad.routeId,
           routeName: ad.routeShortName ?? "Unnamed Route",
-          routeColor: color?.trim() !== "" ? color : null,
+          routeColor: normalizeRouteColor(staticRoute?.color ?? null),
           stopName: staticStop?.name ?? "Unnamed Stop",
           headsign: this.removeRouteNameFromHeadsign(
             ad.routeShortName,

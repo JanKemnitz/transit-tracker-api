@@ -145,6 +145,17 @@ describe("E2E test", () => {
     expect(response.body).toMatchSnapshot()
   })
 
+  test("GET /stops/:id/routes returns null color for black route", async () => {
+    const response = await request(app.getHttpServer())
+      .get("/stops/testfeed:BEATTY_AIRPORT/routes")
+      .expect("Content-Type", /json/)
+      .expect(200)
+
+    const abRoute = response.body.find((r: any) => r.routeId === "testfeed:AB")
+    expect(abRoute).toBeDefined()
+    expect(abRoute.color).toBeNull()
+  })
+
   describe("GET /schedule/:routeStopPairs", () => {
     let dateSpy: MockInstance<() => any>
 

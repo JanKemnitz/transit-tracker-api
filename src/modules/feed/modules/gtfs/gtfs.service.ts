@@ -29,6 +29,7 @@ import { listStopsInArea } from "./queries/list-stops-in-area.queries"
 import { listStops } from "./queries/list-stops.queries"
 import { GtfsSyncService } from "./sync/gtfs-sync.service"
 import { getImportMetadata } from "./sync/queries/get-import-metadata.queries"
+import { normalizeRouteColor } from "../../utils/color"
 
 const TripScheduleRelationship = GtfsRt.TripDescriptor.ScheduleRelationship
 
@@ -252,7 +253,7 @@ export class GtfsService implements FeedProvider {
 
         return routes.map<StopRoute>((route) => ({
           routeId: route.route_id,
-          color: route.route_color?.replaceAll("#", "") ?? null,
+          color: normalizeRouteColor(route.route_color),
           name:
             (!route.route_short_name || route.route_short_name.trim() === ""
               ? route.route_long_name
@@ -357,7 +358,7 @@ export class GtfsService implements FeedProvider {
           routeId: staticTrip.route_id,
           stopId: staticTrip.stop_id,
           routeName: staticTrip.route_name ?? "Unnamed Route",
-          routeColor: staticTrip.route_color?.replaceAll("#", "") ?? null,
+          routeColor: normalizeRouteColor(staticTrip.route_color),
           headsign: staticTrip.stop_headsign
             ? this.removeRouteNameFromHeadsign(
                 staticTrip.route_name,
